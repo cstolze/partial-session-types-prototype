@@ -1,6 +1,6 @@
 # partial-session-types-prototype
 Proof-of-concept implementation in OCaml of a proposed merging algorithm for partial session types.
-This prototype is intended as an artefact for an article submitted at the CONCUR 2020 conference called "Composable Partial Multiparty Session Types".
+This prototype is intended as an artefact for an article submitted at the CONCUR 2021 conference called "Composable Partial Multiparty Session Types".
 
 ## Required softwares:
 The standard ocaml tools, including ocamlbuild, ocamllex, and ocamlyacc.
