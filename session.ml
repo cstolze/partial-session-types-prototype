@@ -18,39 +18,6 @@ and session =
   | Everything
   | Nil of end_comm
 
-let rec sender_string =
-  function
-  | [] -> assert false
-  | [x] -> x
-  | [x;y] -> x ^ ", " ^ y
-  | x :: l -> x ^ ", " ^ sender_string l
-
-let rec msg_to_string =
-  function
-  | Inj1 -> "%inj_1"
-  | Inj2 -> "%inj_2"
-  | Int -> "int"
-  | String -> "string"
-  | Sub s -> "<" ^ session_to_string 0 s ^ ">"
-and main_to_string (Msg (s1,s2,m)) =
-  s1 ^ " -> " ^ sender_string s2 ^ " : " ^ msg_to_string m
-and end_to_string =
-  function
-  | End -> "end"
-  | Close -> "close"
-  | Client (s,g) -> "?" ^ s ^ " : <" ^ session_to_string 0 g ^ ">"
-and session_to_string precedence =
-  let paren trigger txt =
-    if precedence < trigger then txt else "(" ^ txt ^ ")"
-  in
-  function
-  | Internal (g1,g2) -> paren 1 (session_to_string 1 g1 ^ " + " ^ session_to_string 0 g2)
-  | External (g1,g2) -> paren 2 (session_to_string 2 g1 ^ " & " ^ session_to_string 1 g2)
-  | Cons (c,g) -> main_to_string c ^ "; " ^ session_to_string 2 g
-  | Nothing -> "0"
-  | Everything -> "Omega"
-  | Nil c -> end_to_string c
-
 let rec normalize_msg =
   function
   | Sub s -> Sub (normalize_session s)
@@ -259,50 +226,3 @@ let rec merge_main_comm s1 s2 c1 c2 =
          else None
 
 let merge s1 s2 g1 g2 = map s1 s2 (merge_main_comm s1 s2) (merge_end_comm s1 s2 (merge_main_comm s1 s2)) (normalize_session (simplify_nothing_everything_session g1)) (normalize_session (simplify_nothing_everything_session g2))
-
-(* Example (section 6) *)
-let g1 = Cons(Msg("p",["q"],Inj1), Cons(Msg("p",["r"], Sub(Nil End)), Nil Close))
-let g2 = Cons(Msg("p",["q"],Inj2), Nil Close)
-let g1' = Cons(Msg("p",["q"],Inj1), Cons(Msg("q",["r"], Inj1), Nil Close))
-let g2' = Cons(Msg("p",["q"],Inj2), Cons(Msg("q",["r"], Inj2), Nil Close))
-let g1'' = Cons(Msg("q",["r"],Inj1), Cons(Msg("p",["r"], Sub(Nil Close)), Nil Close))
-let g2'' = Cons(Msg("q",["r"],Inj2), Nil Close)
-
-let p_type = Internal(g1,g2)
-let q_type = External(g1',g2')
-let r_type = External(g1'',g2'')
-
-let pq_type = merge ["p"] ["q"] p_type q_type
-let pr_type = merge ["p"] ["r"] p_type r_type
-let qr_type = merge ["q"] ["r"] q_type r_type
-
-let pqr_type = merge ["p";"q"] ["r"] pq_type r_type
-
-let () = Printf.printf "Section 6:\ntype of p:\n\t%s\ntype of q:\n\t%s\ntype of r:\n\t%s\ntype of p|q:\n\t%s\ntype of p|r:\n\t%s\ntype of q|r:\n\t%s\ntype of p|q|r:\n\t%s\n\n" (session_to_string 0 p_type) (session_to_string 0 q_type) (session_to_string 0 r_type) (session_to_string 0 pq_type) (session_to_string 0 pr_type) (session_to_string 0 qr_type) (session_to_string 0 pqr_type)
-
-(* Example (section A.1) *)
-let p_type = Cons(Msg("p",["q";"r"], Sub(Nil End)), Cons(Msg("p",["q"], Sub(Nil End)), Nil Close))
-let q_type = Cons(Msg("p",["q"], Sub(Nil Close)), Cons(Msg("p",["q"], Sub(Nil Close)), Nil Close))
-let r_type = Cons(Msg("p",["r"], Sub(Nil Close)), Nil Close)
-
-let pq_type = merge ["p"] ["q"] p_type q_type
-let pr_type = merge ["p"] ["r"] p_type r_type
-let qr_type = merge ["q"] ["r"] q_type r_type
-
-let pqr_type = merge ["p"] ["q";"r"] p_type qr_type
-
-let () = Printf.printf "Section A.1:\ntype of p:\n\t%s\ntype of q:\n\t%s\ntype of r:\n\t%s\ntype of p|q:\n\t%s\ntype of p|r:\n\t%s\ntype of q|r:\n\t%s\ntype of p|q|r:\n\t%s\n\n" (session_to_string 0 p_type) (session_to_string 0 q_type) (session_to_string 0 r_type) (session_to_string 0 pq_type) (session_to_string 0 pr_type) (session_to_string 0 qr_type) (session_to_string 0 pqr_type)
-
-(* Example (section A.2) *)
-let p_type = Nil (Client("p", Nothing))
-let q_type = Nil (Client("p", Cons(Msg("q",["r"], Inj1), Nil Close)))
-let r_type = Nil (Client("p", Cons(Msg("r",["q"], Inj1), Nil Close)))
-
-let pq_type = merge ["p"] ["q"] p_type q_type
-let pr_type = merge ["p"] ["r"] p_type r_type
-let qr_type = merge ["q"] ["r"] q_type r_type
-
-let pqr_type = merge ["p"] ["q"; "r"] p_type qr_type
-
-let () = Printf.printf "Section A.2:\ntype of p:\n\t%s\ntype of q:\n\t%s\ntype of r:\n\t%s\ntype of p|q:\n\t%s\ntype of p|r:\n\t%s\ntype of q|r:\n\t%s\ntype of p|q|r:\n\t%s\n\n" (session_to_string 0 p_type) (session_to_string 0 q_type) (session_to_string 0 r_type) (session_to_string 0 pq_type) (session_to_string 0 pr_type) (session_to_string 0 qr_type) (session_to_string 0 pqr_type
-)

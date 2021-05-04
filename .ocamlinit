@@ -1,0 +1,15 @@
+#directory "_build"
+
+#load "session.cmo"
+#load "parser.cmo"
+#load "lexer.cmo"
+#load "interface.cmo"
+#load "example.cmo"
+
+#install_printer Interface.fprintf_session
+
+open Session
+open Parser
+open Lexer
+open Interface
+open Example
