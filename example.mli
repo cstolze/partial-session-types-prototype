@@ -47,3 +47,15 @@ module Ex3 : sig
 
   val run : unit -> unit
 end
+
+(** Example from "Multiparty Session Types as Coherence proofs" by Carbone et al. *)
+module Ex4 : sig
+  val b1_type : session
+  val b2_type : session
+  val s_type : session
+
+  val b1b2_type : session
+  val b1b2s_type : session
+
+  val b1b2s_type' : session
+end
