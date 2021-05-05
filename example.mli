@@ -56,6 +56,4 @@ module Ex4 : sig
 
   val b1b2_type : session
   val b1b2s_type : session
-
-  val b1b2s_type' : session
 end

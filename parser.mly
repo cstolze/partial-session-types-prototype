@@ -22,14 +22,14 @@
 %%
 
 s:
-    | ZERO { Nothing }
-    | OMEGA { Everything }
-    | END { Nil End }
-    | CLOSE { Nil Close }
-    | WHYNOT ID COLON LT s GT { Nil (Client($2,$5)) }
-    | s PLUS s { Internal ($1,$3) }
-    | s AND s { External ($1,$3) }
-    | c SEMICOLON s { Cons($1,$3) }
+    | ZERO { [] }
+    | OMEGA { [[]] }
+    | END { [[Nil End]] }
+    | CLOSE { [[Nil Close]] }
+    | WHYNOT ID COLON LT s GT { [[Nil (Client($2,$5))]] }
+    | s PLUS s { cup $1 $3 }
+    | s AND s { cupcup $1 $3 }
+    | c SEMICOLON s { cons $1 $3 }
     | OPENP s CLOSP { $2 }
 
 c:

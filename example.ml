@@ -69,11 +69,6 @@ module Ex4 = struct (* Example from "Multiparty Session Types as Coherence proof
   let gsub_s = "b1 -> s : %inj1; b1 -> s : string; close & b1 -> s : %inj2; b1 -> s : string; close"
   let s_type = parse @@ "b1 -> s : string; s -> b1, b2 : int; (b2 -> s : %inj1; b2 -> s : string; end & b2 -> s : %inj2; b1 -> s : <" ^ gsub_s ^ ">; b1 -> s : string; b2 -> s : string; end)"
 
-  let b1b2_type = simplify_nothing_everything_session @@ merge ["b1"] ["b2"] b1_type b2_type
-
-  (* unreadable *)
+  let b1b2_type = merge ["b1"] ["b2"] b1_type b2_type
   let b1b2s_type = merge ["b1";"b2"] ["s"] b1b2_type s_type
-
-  (* the result is of the form "G1 + (G2 & G2 & G2)" *)
-  let b1b2s_type' = simplify_nothing_everything_session @@ b1b2s_type
 end
