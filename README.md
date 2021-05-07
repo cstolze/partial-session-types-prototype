@@ -11,6 +11,12 @@ The standard ocaml tools, including ocamlbuild, ocamllex, and ocamlyacc.
 - Type `Ex1.run ();;`
 - Type `Ex2.run ();;`
 - Type `Ex3.run ();;`
+- You can declare your own session types and merge them. For instance:
+```
+let p_type = parse "p -> q : %inj1; q -> p : int; close"
+let q_type = parse "p -> q : %inj1; q -> p : int; close & p -> q : %inj2; close"
+let pq_type = merge ["p"] ["q"] p_type q_type;;
+```
 - You can also test the different implemented functions.
 
 The different .ml files have self-explanatory names. You can also look at the *.mli files and at the .ocamlinit file.
