@@ -188,7 +188,6 @@ let rec map s1 s2 fm fe g1 g2 =
 let rec merge_end_comm s1 s2 fm e1 e2 =
   match e1, e2 with
   | Close, e | e, Close -> Some e
-  | End, End -> Some End
   | Client (p1, g1), Client (p2, g2) when p1 = p2 -> Some (Client (p1, map s1 s2 fm (merge_end_comm s1 s2 fm) g1 g2))
   | _ -> None
 
