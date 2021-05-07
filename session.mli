@@ -20,6 +20,9 @@ and session =
 
 (* I have chosen to expose most of the internal functions below, but in a non-prototype implementation the only interesting function would be merge *)
 
+(** merge composes everything nicely *)
+val merge : string list -> string list -> session -> session -> session
+
 (** convert a session to DNF (Definition 6 of the paper) *)
 val normalize_session : session -> session
 val normalize_msg : msg -> msg
@@ -61,6 +64,3 @@ val merge_end_comm : string list -> string list ->
 (** merge_main_comm implements part of Definition 13 and 15 *)
 val merge_main_comm : string list -> string list ->
                       main_comm option -> main_comm option -> main_comm option
-
-(** merge composes everything nicely *)
-val merge : string list -> string list -> session -> session -> session
